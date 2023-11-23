@@ -4,13 +4,26 @@ frameworkVersion: '3'
 provider:
   name: aws
   runtime: nodejs18.x
+  iamRoleStatements:
+   - Effect: Allow
+     Action:
+      - dynamodb:*
+    # Resource:
+    #  - arn
+
 
 functions:
-  api:
-    handler: index.handler
+  addTodo:
+    handler: src/addTodo.handler
     events:
       - httpApi:
           path: /
+          method: post
+  fetchTodo:
+    handler: src/fetchTodo.handler
+    events:
+      - httpApi:
+          path: /todos
           method: get
 
 resources:
@@ -20,7 +33,7 @@ resources:
       Properties:
         TableName: TodoTable
         BillingMode: PAY_PER_REQUEST
-        AttributeDefinition:
+        AttributeDefinitions:
           - AttributeName: id
             AttributeType: S
         KeySchema:
